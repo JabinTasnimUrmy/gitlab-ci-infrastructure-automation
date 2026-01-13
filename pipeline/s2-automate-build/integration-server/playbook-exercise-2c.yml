@@ -1,0 +1,44 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Configure GitLab external_url and Puma port
+      lineinfile:
+        path: /etc/gitlab/gitlab.rb
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      loop:
+        - { regexp: "^external_url", line: "external_url 'http://192.168.56.9/gitlab'" }
+        - { regexp: "^# puma\\['port'\\]", line: "puma['port'] = 8088" }
+      notify: Reconfigure GitLab
+
+    - name: Ensure vagrant user is in the docker group
+      user:
+        name: vagrant
+        groups: docker
+        append: yes
+
+    - name: Register the GitLab Runner (non-interactive)
+      command: >
+        gitlab-runner register
+          --non-interactive
+          --url "http://192.168.56.9/gitlab/"
+          --registration-token "YOUR_REGISTRATION_TOKEN"
+          --executor "docker"
+          --docker-image alpine:latest
+          --description "[integration-server] docker"
+          --tag-list "integration"
+          --run-untagged="true"
+          --locked="false"
+      args:
+        creates: /etc/gitlab-runner/config.toml
+
+    - name: Ensure GitLab Runner service is started and enabled
+      service:
+        name: gitlab-runner
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: Reconfigure GitLab
+      command: gitlab-ctl reconfigure
