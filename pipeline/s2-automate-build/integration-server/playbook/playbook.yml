@@ -1,0 +1,46 @@
+# vim: ts=2
+---
+- hosts: all
+  remote_user: vagrant
+  become: yes
+  become_method: sudo
+    
+  
+  vars:
+    vHome: /home/vagrant
+      
+  tasks:
+
+  - include_role:
+      name: gitlab
+
+  - include_role:
+      name: docker
+
+# This task uses a loop to edit the gitlab.rb file in two places
+- name: Configure GitLab external_url and Puma port
+  lineinfile:
+    path: /etc/gitlab/gitlab.rb
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - { regexp: "^external_url", line: "external_url 'http://192.168.56.9/gitlab'" }  # Uses the CORRECT IP address 
+    - { regexp: "^# puma['port']", line: "puma['port'] = 8088" }  # Use puma['port'] instead of unicorn['port']
+  notify: Reconfigure GitLab
+
+# This task installs the gitlab-runner package
+- name: Install GitLab Runner package
+  apt:
+    name: gitlab-runner
+    state: present
+    update_cache: yes
+
+# This task ensures the 'vagrant' user is part of the 'docker' group
+- name: Ensure vagrant user is in the docker group
+  user:
+    name: vagrant
+    groups: docker
+    append: yes
+
+
+  
