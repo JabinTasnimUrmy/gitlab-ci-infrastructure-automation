@@ -1,0 +1,37 @@
+image: maven:latest
+
+stages:
+  - build
+  - test
+  - run
+  - deploy
+
+cache:
+  paths:
+    - target/
+
+build_app:
+  stage: build
+  script:
+    - mvn compile
+
+test_app:
+  stage: test
+  script:
+    - mvn test
+
+run_app:
+  stage: run
+  script:
+    - mvn package
+    - mvn exec:java -Dexec.mainClass="com.jcg.maven.App"
+
+deploy_app:
+    stage: deploy
+    script:
+    - echo "Deploy review app"
+    artifacts:
+        name: "my-app"
+        paths:
+        - target/*.jar
+        
