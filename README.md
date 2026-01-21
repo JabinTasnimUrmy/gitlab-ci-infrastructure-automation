@@ -23,7 +23,7 @@ Instead of using pre-configured cloud services, I built the infrastructure from 
 
 *   **Infrastructure:** Oracle VirtualBox, Vagrant
 *   **Configuration Management:** Ansible (Playbooks, Roles, Handlers)
-*   **CI/CD Platform:** GitLab CE (Self-Hosted)
+*   **CI/CD Platform:** GitLab CE 
 *   **Runners:** GitLab Runner (utilizing Docker executor)
 *   **Application:** Java, Maven (Hello World application)
 *   **Containerization:** Docker
