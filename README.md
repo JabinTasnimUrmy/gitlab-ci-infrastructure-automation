@@ -1,4 +1,4 @@
-# 🚀 Automated CI/CD Pipeline & Infrastructure as Code
+# Automated CI/CD Pipeline & Infrastructure as Code
 
 ![GitLab](https://img.shields.io/badge/gitlab-%23181717.svg?style=for-the-badge&logo=gitlab&logoColor=white)
 ![Ansible](https://img.shields.io/badge/ansible-%23EE0000.svg?style=for-the-badge&logo=ansible&logoColor=white)
@@ -6,7 +6,7 @@
 ![Vagrant](https://img.shields.io/badge/vagrant-%231563FF.svg?style=for-the-badge&logo=vagrant&logoColor=white)
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 
-## 📖 Project Overview
+## Project Overview
 
 This project demonstrates the implementation of a **complete DevOps lifecycle**, from provisioning a self-hosted integration server to deploying a Java application via a CI/CD pipeline.
 
@@ -19,7 +19,7 @@ Instead of using pre-configured cloud services, I built the infrastructure from 
 
 ---
 
-## 🛠️ Tech Stack & Tools
+## Tech Stack & Tools
 
 *   **Infrastructure:** Oracle VirtualBox, Vagrant
 *   **Configuration Management:** Ansible (Playbooks, Roles, Handlers)
@@ -30,7 +30,7 @@ Instead of using pre-configured cloud services, I built the infrastructure from 
 
 ---
 
-## ⚙️ Architecture & Implementation
+## Architecture & Implementation
 
 ### 1. Infrastructure as Code (Vagrant + Ansible)
 The environment is provisioned automatically using `vagrant up`. This triggers an Ansible playbook (`playbook.yml`) which performs the following tasks:
@@ -51,28 +51,28 @@ I created a multi-stage pipeline that triggers automatically on every code push.
 
 ---
 
-## 🧠 Challenges & Solutions
+## Challenges & Solutions
 
 During this project, I encountered real-world engineering challenges. Here is how I solved them:
 
-### 🐛 Challenge 1: Network & IP Conflicts
+### Challenge 1: Network & IP Conflicts
 **The Issue:** The Vagrant VM was assigning a dynamic IP (`192.168.56.9`) that did not match the static IP I initially configured in the GitLab settings (`192.168.33.9`), making the UI inaccessible.
 **The Solution:** 
 1. Used `ip a` to analyze the network interfaces inside the VM.
 2. Updated the `external_url` in the Ansible playbook and `gitlab.rb` to match the actual private network IP.
 3. Re-ran `gitlab-ctl reconfigure` to apply the networking changes.
 
-### 🐛 Challenge 2: Ephemeral Containers vs. Artifacts
+### Challenge 2: Ephemeral Containers vs. Artifacts
 **The Issue:** In the initial pipeline, the compiled `.jar` file generated in the "Build" stage was disappearing before the "Deploy" stage.
 **The Solution:** I learned that Docker containers used by GitLab Runners are destroyed after every job. To fix this, I implemented **GitLab Artifacts** in the `.gitlab-ci.yml` file. This tells GitLab to extract the `target/*.jar` file from the container before it destroys it and store it permanently.
 
-### 🐛 Challenge 3: Port Conflicts
+### Challenge 3: Port Conflicts
 **The Issue:** The default ports for the Puma web server conflicted with other services.
 **The Solution:** Modified the `gitlab.rb` configuration to change the Puma port to `8088` and successfully restarted the service using Ansible handlers.
 
 ---
 
-## 🚀 How to Run This Project
+## How to Run This Project
 
 1.  **Clone the Repository:**
     ```bash
